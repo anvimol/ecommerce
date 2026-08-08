@@ -1,7 +1,5 @@
 package com.anvimol.ecommerce.model;
 
-import org.hibernate.annotations.ManyToAny;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,7 +21,6 @@ public class Producto {
     private int cantidad;
     @ManyToOne
     private Usuario usuario; // Relación con la entidad Usuario
-
     
     public Producto() {
     }
