@@ -3,6 +3,7 @@ package com.anvimol.ecommerce.controller;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 // import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,12 +18,13 @@ import com.anvimol.ecommerce.service.ProductoService;
 public class ProductoController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(ProductoController.class);
+
     @Autowired
 	private ProductoService productoService;
 
     @GetMapping("")
-	public String show() {
-		// model.addAttribute("productos", productoService.findAll());
+	public String show(Model model) {
+		model.addAttribute("productos", productoService.findAll());
 		return "productos/show";
 	}
 

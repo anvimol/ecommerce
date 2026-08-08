@@ -13,6 +13,7 @@ import com.anvimol.ecommerce.repository.IProductoRepository;
 public class ProductoServiceImpl implements ProductoService{
 	
 	@Autowired
+	
 	private IProductoRepository productoRepository;
 
 	@Override
