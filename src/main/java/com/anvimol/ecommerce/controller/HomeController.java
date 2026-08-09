@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.anvimol.ecommerce.model.DetalleOrden;
 import com.anvimol.ecommerce.model.Orden;
 import com.anvimol.ecommerce.model.Producto;
+import com.anvimol.ecommerce.model.Usuario;
+import com.anvimol.ecommerce.service.IUsuarioService;
 import com.anvimol.ecommerce.service.ProductoService;
-
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/")
@@ -30,6 +30,8 @@ public class HomeController {
 
     @Autowired
     private ProductoService productoService;
+    @Autowired
+    private IUsuarioService usuarioService;
 
     // para almacenar los detalles de la orden
     List<DetalleOrden> detalles = new ArrayList<DetalleOrden>();
@@ -117,13 +119,26 @@ public class HomeController {
     }
 
     @GetMapping("/getCart")
-	public String getCart(Model model) {
-		
-		model.addAttribute("cart", detalles);
-		model.addAttribute("orden", orden);
-		
-		//sesion
-		//model.addAttribute("sesion", session.getAttribute("idusuario"));
-		return "/usuario/carrito";
-	}
+    public String getCart(Model model) {
+
+        model.addAttribute("cart", detalles);
+        model.addAttribute("orden", orden);
+
+        // sesion
+        // model.addAttribute("sesion", session.getAttribute("idusuario"));
+        return "/usuario/carrito";
+    }
+
+    @GetMapping("/order")
+    public String order(Model model) {
+        Integer id = 1;
+        Usuario usuario = usuarioService.findById(id).get();
+        
+        model.addAttribute("cart", detalles);
+        model.addAttribute("orden", orden);
+        model.addAttribute("usuario", usuario);
+
+        return "usuario/resumenorden";
+    }
+
 }
