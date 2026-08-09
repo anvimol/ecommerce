@@ -1,9 +1,13 @@
 package com.anvimol.ecommerce.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.annotations.Audited;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,8 @@ import com.anvimol.ecommerce.model.DetalleOrden;
 import com.anvimol.ecommerce.model.Orden;
 import com.anvimol.ecommerce.model.Producto;
 import com.anvimol.ecommerce.model.Usuario;
+import com.anvimol.ecommerce.service.IDetalleOrdenService;
+import com.anvimol.ecommerce.service.IOrdenService;
 import com.anvimol.ecommerce.service.IUsuarioService;
 import com.anvimol.ecommerce.service.ProductoService;
 
@@ -32,6 +38,10 @@ public class HomeController {
     private ProductoService productoService;
     @Autowired
     private IUsuarioService usuarioService;
+    @Autowired
+    private IOrdenService ordenService;
+    @Autowired
+    private IDetalleOrdenService detalleOrdenService;
 
     // para almacenar los detalles de la orden
     List<DetalleOrden> detalles = new ArrayList<DetalleOrden>();
@@ -72,7 +82,10 @@ public class HomeController {
         detalleOrden.setCantidad(cantidad);
         detalleOrden.setPrecio(producto.getPrecio());
         detalleOrden.setNombre(producto.getNombre());
-        detalleOrden.setTotal(producto.getPrecio() * cantidad);
+        double totalDetalle = producto.getPrecio() * cantidad;
+        detalleOrden.setTotal(BigDecimal.valueOf(totalDetalle)
+            .setScale(2, RoundingMode.HALF_UP)
+            .doubleValue());
         detalleOrden.setProducto(producto);
 
         // validar que le producto no se añada 2 veces
@@ -84,8 +97,9 @@ public class HomeController {
         }
 
         sumaTotal = detalles.stream().mapToDouble(dt -> dt.getTotal()).sum();
-
-        orden.setTotal(sumaTotal);
+        orden.setTotal(BigDecimal.valueOf(sumaTotal)
+            .setScale(2, RoundingMode.HALF_UP)
+            .doubleValue());
         model.addAttribute("cart", detalles);
         model.addAttribute("orden", orden);
 
@@ -139,6 +153,36 @@ public class HomeController {
         model.addAttribute("usuario", usuario);
 
         return "usuario/resumenorden";
+    }
+
+    // guardar la orden
+    @GetMapping("/saveOrder")
+    public String saveOrder() {
+
+        Date fechaCreacion = new Date();
+        orden.setFechaCreacion(fechaCreacion);
+        orden.setNumero(ordenService.generarNumeroOrden());
+
+        // Usuario
+        Integer id = 1;
+        Usuario usuario = usuarioService.findById(id).get();
+
+        orden.setUsuario(usuario);
+
+        List<DetalleOrden> detallesOrden = new ArrayList<>();
+        for (DetalleOrden dt : detalles) {
+            dt.setOrden(orden);
+            detallesOrden.add(dt);
+        }
+        orden.setDetalles(new ArrayList<>(detallesOrden));
+
+        ordenService.save(orden);
+
+        // Limpiar lista y orden
+        orden = new Orden();
+        detalles = new ArrayList<>();
+
+        return "redirect:/";
     }
 
 }

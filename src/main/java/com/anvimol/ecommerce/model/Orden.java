@@ -1,13 +1,16 @@
 package com.anvimol.ecommerce.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,8 +27,8 @@ public class Orden {
     @ManyToOne
     private Usuario usuario; // Relación con la entidad Usuario
 
-    @OneToOne(mappedBy = "orden")
-    private DetalleOrden detalle; // Relación con la entidad DetalleOrden
+    @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleOrden> detalles = new ArrayList<>(); // Relación con la entidad DetalleOrden
     
     public Orden() {
     }
@@ -86,12 +89,12 @@ public class Orden {
         this.usuario = usuario;
     } 
 
-    public DetalleOrden getDetalle() {
-        return detalle;
+    public List<DetalleOrden> getDetalles() {
+        return detalles;
     }
 
-    public void setDetalle(DetalleOrden detalle) {
-        this.detalle = detalle;
+    public void setDetalles(List<DetalleOrden> detalles) {
+        this.detalles = detalles;
     }
 
     @Override

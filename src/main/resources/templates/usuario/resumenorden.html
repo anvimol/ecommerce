@@ -74,9 +74,9 @@
                   <tbody>
                     <tr th:each="dtorden : ${cart}">
                       <td th:text="${dtorden.nombre}"></td>
-                      <td th:text="${dtorden.precio}"></td>
+                      <td th:text="${#numbers.formatDecimal(dtorden.precio, 1, 2)}"></td>
                       <td th:text="${dtorden.cantidad}"></td>
-                      <td th:text="${dtorden.total}"></td>
+                      <td th:text="${#numbers.formatDecimal(dtorden.total, 1, 2)}"></td>
 
                     </tr>
                   </tbody>
@@ -92,9 +92,9 @@
 
             <ul class="list-group">
               <li class="list-group-item">
-                <h5 th:text="'Total: ' + ${orden.total}"></h5>
+                <h5 th:text="'Total: ' + ${#numbers.formatDecimal(orden.total, 1, 2)}"></h5>
               </li>
-              <a href="#" class="btn btn-dark">Generar</a>
+              <a th:href="@{saveOrder}" class="btn btn-dark">Generar</a>
             </ul>
           </div>
         </div>
