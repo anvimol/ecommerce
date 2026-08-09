@@ -20,6 +20,8 @@ import com.anvimol.ecommerce.model.Orden;
 import com.anvimol.ecommerce.model.Producto;
 import com.anvimol.ecommerce.service.ProductoService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/")
 public class HomeController {
@@ -113,4 +115,15 @@ public class HomeController {
 
         return "usuario/carrito";
     }
+
+    @GetMapping("/getCart")
+	public String getCart(Model model) {
+		
+		model.addAttribute("cart", detalles);
+		model.addAttribute("orden", orden);
+		
+		//sesion
+		//model.addAttribute("sesion", session.getAttribute("idusuario"));
+		return "/usuario/carrito";
+	}
 }
