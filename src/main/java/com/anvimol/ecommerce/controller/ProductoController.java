@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.anvimol.ecommerce.model.Producto;
 import com.anvimol.ecommerce.model.Usuario;
+import com.anvimol.ecommerce.service.IUsuarioService;
 import com.anvimol.ecommerce.service.ProductoService;
 import com.anvimol.ecommerce.service.UploadFileService;
 
@@ -30,6 +31,9 @@ public class ProductoController {
 
     @Autowired
 	private ProductoService productoService;
+
+	@Autowired
+	private IUsuarioService usuarioService;
 
     @Autowired
     private UploadFileService upload;
@@ -46,9 +50,9 @@ public class ProductoController {
     }
 
     @PostMapping("/save")
-    public String save(Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
+    public String save(Producto producto, @RequestParam("img") MultipartFile file, HttpSession session) throws IOException {
         LOGGER.info("Guardando producto: {}", producto);
-        Usuario user = new Usuario(1, null, null, null, null, null, null, null);
+        Usuario user = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString())).get();
 
         producto.setUsuario(user);
 
