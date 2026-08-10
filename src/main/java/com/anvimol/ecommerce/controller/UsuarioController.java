@@ -18,6 +18,7 @@ import com.anvimol.ecommerce.service.IUsuarioService;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -87,5 +88,18 @@ public class UsuarioController {
 		model.addAttribute("ordenes", ordenes);
 		
 		return "usuario/compras";
+	}
+
+    @GetMapping("/detalle/{id}")
+	public String detalleCompra(@PathVariable Integer id, HttpSession session, Model model) {
+		logger.info("Id de la orden: {}", id);
+		Orden orden = ordenService.findByIdWithDetalles(id)
+				.orElseThrow(() -> new IllegalArgumentException("Orden no encontrada"));
+		
+		model.addAttribute("detalles", orden.getDetalles());
+		
+		//session
+		model.addAttribute("sesion", session.getAttribute("idusuario"));
+		return "usuario/detallecompra";
 	}
 }
